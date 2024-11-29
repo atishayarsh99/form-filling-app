@@ -5,16 +5,18 @@ const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+    origin: '*',  // Allow all origins, adjust for more secure setups later
+}));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => console.log('MongoDB connected'))
-    .catch(err => console.log(err));
+    .catch(err => console.log('MongoDB connection error:', err));
 
 // Data Schema
 const dataSchema = new mongoose.Schema({
@@ -64,6 +66,7 @@ app.post('/data', async (req, res) => {
     }
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Backend running on http://localhost:${port}`);
 });
